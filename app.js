@@ -16,7 +16,8 @@ app.use(
     duration: 60000,
     errorMessage:
       "Please stop hitting us so hard. Please deploy your own instance of the API",
-    id: ctx => ctx.get("X-Real-IP"),
+    // id: ctx => ctx.get('X-Real-IP'),
+    id: ctx => ctx.ip,
     headers: {
       remaining: "Rate-Limit-Remaining",
       reset: "Rate-Limit-Reset",
