@@ -19,6 +19,7 @@ class Gdax extends EventEmitter {
   constructor() {
     super();
     this.apiClient = new ApiClient({ baseUrl: BASE_URL });
+    this.lastUpdate = {};
   }
 
   connect = () => {
@@ -44,7 +45,8 @@ class Gdax extends EventEmitter {
         if (price) {
           this.emit("message", {
             cryptoCurrency,
-            price
+            price,
+            exchange: "gdax"
           });
         }
       }

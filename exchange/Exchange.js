@@ -1,6 +1,9 @@
 import EventEmitter from "events";
 import Gdax from "./Gdax";
 import Poloniex from "./Poloniex";
+import Kraken from "./Kraken";
+import Coinbase from "./Coinbase";
+import Bitstamp from "./Bitstamp";
 import CoinmarketCap from "./CoinmarketCap";
 
 import { cryptoCurrencyMap } from "../utils/prices";
@@ -11,7 +14,10 @@ class Exchange extends EventEmitter {
   constructor() {
     super();
     this.gdax = new Gdax();
+    this.coinbase = new Coinbase();
+    this.bitstamp = new Bitstamp();
     this.poloniex = new Poloniex();
+    this.kraken = new Kraken();
     this.coinmarketcap = new CoinmarketCap();
     this.prices = {};
   }
@@ -30,6 +36,21 @@ class Exchange extends EventEmitter {
       }
       this.updateCacheAndEmit(data);
     });
+
+    this.kraken.connect();
+    this.kraken.on("message", data => {
+      this.updateCacheAndEmit(data);
+    });
+
+    this.coinbase.connect();
+    this.coinbase.on("message", data => {
+      this.updateCacheAndEmit(data);
+    });
+
+    // this.bitstamp.connect();
+    // this.bitstamp.on('message', data => {
+    //   this.updateCacheAndEmit(data);
+    // });
   };
 
   getMarketData = async () => {
@@ -85,6 +106,25 @@ class Exchange extends EventEmitter {
 
   updateCacheAndEmit = async data => {
     let emitted = false;
+
+    // Just emit the other exchanges that we don't use
+    // for populating the graphs
+    // Maybe we'll add a day only chart for each exchange in the future
+    // api-prices-day-[exchange]
+    if (Array.isArray(data)) {
+      this.emit("message", data);
+      emitted = true;
+      return;
+    } else {
+      this.emit("message", [
+        {
+          amount: data.price,
+          base: data.cryptoCurrency,
+          exchange: data.exchange
+        }
+      ]);
+    }
+
     for (let period of VALID_PERIODS) {
       const key = `api-prices-${period}`;
       try {
