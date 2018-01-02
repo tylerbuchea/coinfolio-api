@@ -10,6 +10,9 @@ class WebsocketServer {
       verifyClient: this.verifyClient,
       clientTracking: true
     });
+    this.wss.on("connection", ws => {
+      ws.send(JSON.stringify(this.exchange.cache));
+    });
   }
 
   broadcast = data => {

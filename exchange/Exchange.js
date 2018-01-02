@@ -5,6 +5,7 @@ import Kraken from "./Kraken";
 import Coinbase from "./Coinbase";
 import Bitstamp from "./Bitstamp";
 import CoinmarketCap from "./CoinmarketCap";
+import _ from "lodash";
 
 import { cryptoCurrencyMap } from "../utils/prices";
 import { VALID_PERIODS } from "../utils/period";
@@ -19,7 +20,7 @@ class Exchange extends EventEmitter {
     this.poloniex = new Poloniex();
     this.kraken = new Kraken();
     this.coinmarketcap = new CoinmarketCap();
-    this.prices = {};
+    this.cache = { initial: {} };
   }
 
   connect = () => {
@@ -104,6 +105,21 @@ class Exchange extends EventEmitter {
     return this.prices;
   };
 
+  updateCache = data => {
+    const cache = _.clone(this.cache);
+    const exchangePrices = _.merge(cache.initial, {
+      ...data.reduce((currator = {}, current) => {
+        currator[current.exchange] = currator[current.exchange] || {};
+        currator[current.exchange][current.base] = {
+          amount: current.amount
+        };
+        return currator;
+      }, {})
+    });
+
+    this.cache = { initial: exchangePrices };
+  };
+
   updateCacheAndEmit = async data => {
     let emitted = false;
 
@@ -112,17 +128,20 @@ class Exchange extends EventEmitter {
     // Maybe we'll add a day only chart for each exchange in the future
     // api-prices-day-[exchange]
     if (Array.isArray(data)) {
+      this.updateCache(data);
       this.emit("message", data);
       emitted = true;
       return;
     } else {
-      this.emit("message", [
+      const formattedData = [
         {
           amount: data.price,
           base: data.cryptoCurrency,
           exchange: data.exchange
         }
-      ]);
+      ];
+      this.updateCache(formattedData);
+      this.emit("message", formattedData);
     }
 
     for (let period of VALID_PERIODS) {
