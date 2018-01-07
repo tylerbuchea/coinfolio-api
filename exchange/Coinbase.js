@@ -14,8 +14,8 @@ const BASE_URL = "https://api.coinbase.com/v2";
 const CRYPTO_CURRENCY_PAIRS = {
   "BTC-USD": "BTC-USD", // Bitcoin
   "ETH-USD": "ETH-USD", // Ethereum
-  "LTC-USD": "LTC-USD", // Litecoin
-  "BCH-USD": "BCH-USD" // Litecoin
+  "BCH-USD": "BCH-USD", // Bitcoin Cash
+  "LTC-USD": "LTC-USD" // Litecoin
 };
 
 export default class Coinbase extends EventEmitter {
@@ -29,13 +29,13 @@ export default class Coinbase extends EventEmitter {
   pull = async () => {
     const [error, data] = await to(this.getTicker());
     if (error) {
-      console.error(error);
+      console.error("Coinbase Error retrying price update", error);
     } else {
       const oldData = _.cloneDeep(this.data);
       this.data = _.differenceWith(data, oldData, _.isEqual);
       if (this.data.length) this.emit("message", this.data);
     }
-    setTimeout(this.pull, 1000);
+    setTimeout(this.pull, 2000);
   };
 
   connect = () => {

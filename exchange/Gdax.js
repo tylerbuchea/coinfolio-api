@@ -9,6 +9,7 @@ import redis from "../db/redis";
 const CRYPTO_CURRENCY_PAIRS = [
   "BTC-USD", // Bitcoin
   "ETH-USD", // Ethereum
+  "BCH-USD", // Bitcoin Cash
   "LTC-USD" // Litecoin
 ];
 

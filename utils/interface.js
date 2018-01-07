@@ -10,10 +10,14 @@ function Interface(exchangeOptions) {
       const [error1, response] = await to(
         fetch(url(options), headers(options))
       );
-      if (error1) throw error1;
+      if (error1) {
+        throw error1;
+      }
 
       const [error2, responseBody] = await to(response.json());
-      if (error2) throw error2;
+      if (error2) {
+        throw error2;
+      }
       // checkResponseBody(responseBody, options); // for 200s with error responses, etc.
 
       const mutatedData = mutateResponseBody(responseBody, options);

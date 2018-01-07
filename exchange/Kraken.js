@@ -14,7 +14,9 @@ const BASE_URL = "https://api.kraken.com/0/public";
 const CRYPTO_CURRENCY_PAIRS = {
   "BTC-USD": "XXBTZUSD", // Bitcoin
   "ETH-USD": "XETHZUSD", // Ethereum
-  "LTC-USD": "XLTCZUSD" // Litecoin
+  "BCH-USD": "BCHUSD", // Bitcoin Cash
+  "LTC-USD": "XLTCZUSD", // Litecoin
+  "XRP-USD": "XXRPZUSD" // Ripple Coin
 };
 
 export default class Kraken extends EventEmitter {
@@ -28,13 +30,13 @@ export default class Kraken extends EventEmitter {
   pull = async () => {
     const [error, data] = await to(this.getTicker());
     if (error) {
-      console.error(error);
+      console.error("Kraken Error retrying price update", error);
     } else {
       const oldData = _.cloneDeep(this.data);
       this.data = _.differenceWith(data, oldData, _.isEqual);
       if (this.data.length) this.emit("message", this.data);
     }
-    setTimeout(this.pull, 1000);
+    setTimeout(this.pull, 2000);
   };
 
   connect = () => {
