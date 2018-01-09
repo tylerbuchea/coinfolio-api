@@ -10,22 +10,24 @@ import api from "./api";
 
 const app = new Koa();
 
-app.use(
-  ratelimit({
-    db: redis,
-    duration: 60000,
-    errorMessage:
-      "Please stop hitting us so hard. Please deploy your own instance of the API",
-    // id: ctx => ctx.get('X-Real-IP'),
-    id: ctx => ctx.ip,
-    headers: {
-      remaining: "Rate-Limit-Remaining",
-      reset: "Rate-Limit-Reset",
-      total: "Rate-Limit-Total"
-    },
-    max: 50
-  })
-);
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    ratelimit({
+      db: redis,
+      duration: 60000,
+      errorMessage:
+        "Please stop hitting us so hard. Please deploy your own instance of the API",
+      // id: ctx => ctx.get('X-Real-IP'),
+      id: ctx => ctx.ip,
+      headers: {
+        remaining: "Rate-Limit-Remaining",
+        reset: "Rate-Limit-Reset",
+        total: "Rate-Limit-Total"
+      },
+      max: 50
+    })
+  );
+}
 
 app.use(compress());
 app.use(cors());
