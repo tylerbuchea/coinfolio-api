@@ -16,17 +16,17 @@ const WS_URL = "wss://www.bitstamp.net";
 const CRYPTO_CURRENCY_PAIRS = {
   // 'BTC-EUR': 'btceur',
   // 'EUR-USD': 'eurusd',
-  // 'XRP-USD': 'xrpusd',
+  "XRP-USD": "xrpusd",
   // 'XRP-EUR': 'xrpeur',
   // 'XRP-BTC': 'xrpbtc',
-  // 'BTC-USD': 'btcusd',
+  "BTC-USD": "btcusd",
   "LTC-USD": "ltcusd",
   // 'LTC-EUR': 'ltceur',
   // 'LTC-BTC': 'ltcbtc',
-  "ETH-USD": "ethusd"
+  "ETH-USD": "ethusd",
   // 'ETH-EUR': 'etheur',
   // 'ETH-BTC': 'ethbtc',
-  // 'BCH-USD': 'bchusd',
+  "BCH-USD": "bchusd"
   // 'BCH-EUR': 'bcheur',
   // 'BCH-BTC': 'bchbtc',
 };
@@ -48,7 +48,7 @@ export default class Bitstamp extends EventEmitter {
       this.data = _.differenceWith(data, oldData, _.isEqual);
       if (this.data.length) this.emit("message", this.data);
     }
-    setTimeout(this.pull, 1000);
+    setTimeout(this.pull, 2000);
   };
 
   pullWebSocket = () => {
@@ -84,7 +84,7 @@ export default class Bitstamp extends EventEmitter {
   };
 
   connect = () => {
-    // this.pull(); // for long pulling from REST Api
+    this.pull(); // for long pulling from REST Api
     // this.pullWebSocket();
   };
 

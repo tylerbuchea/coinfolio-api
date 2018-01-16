@@ -48,10 +48,11 @@ class Exchange extends EventEmitter {
       this.updateCacheAndEmit(data);
     });
 
-    // this.bitstamp.connect();
-    // this.bitstamp.on('message', data => {
-    //   this.updateCacheAndEmit(data);
-    // });
+    this.bitstamp.connect();
+    this.bitstamp.on("message", data => {
+      // console.log(data);
+      this.updateCacheAndEmit(data);
+    });
   };
 
   getMarketData = async () => {

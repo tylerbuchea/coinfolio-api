@@ -59,6 +59,8 @@ class Poloniex extends EventEmitter {
       });
     };
 
+    this.websocket.onerror = error => console.log("heeee", error);
+    this.websocket.onclose = error => console.log("2232323", error);
     this.websocket.open();
   };
 
@@ -81,6 +83,7 @@ class Poloniex extends EventEmitter {
         end,
         period: granularity
       });
+      // console.log(data);
       for (let rate of data) {
         cryptoRates.push(parseFloat(rate["close"]));
       }
