@@ -16,6 +16,7 @@ const WS_URL = "wss://www.bitstamp.net";
 const CRYPTO_CURRENCY_PAIRS = {
   // 'BTC-EUR': 'btceur',
   // 'EUR-USD': 'eurusd',
+  "BTC-USD": "btcusd",
   "XRP-USD": "xrpusd",
   // 'XRP-EUR': 'xrpeur',
   // 'XRP-BTC': 'xrpbtc',
@@ -120,7 +121,7 @@ const interfaceOptions = {
       return headers;
     },
     mutateResponseBody: (responseBody, { currencyPair }) => ({
-      price: responseBody.last,
+      amount: responseBody.last,
       base: currencyPair.split("-")[0],
       currency: currencyPair.split("-")[1],
       exchange: "bitstamp"

@@ -50,7 +50,6 @@ class Exchange extends EventEmitter {
 
     this.bitstamp.connect();
     this.bitstamp.on("message", data => {
-      // console.log(data);
       this.updateCacheAndEmit(data);
     });
   };
